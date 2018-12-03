@@ -213,7 +213,11 @@ class CallbackModule(CallbackBase):
         if task_name is None:
             task_name = task.get_name().strip()
 
-        self._display.banner(u"%s [%s%s]" % (prefix, task_name, args))
+        if task.check_mode or (task.check_mode is None and context.CLIARGS['check']):
+            checkmsg = " [CHECK MODE]" 
+        else:
+            checkmsg = "" 
+        self._display.banner(u"%s [%s%s]%s" % (prefix, task_name, args, checkmsg))
         if self._display.verbosity >= 2:
             path = task.get_path()
             if path:
@@ -229,10 +233,14 @@ class CallbackModule(CallbackBase):
 
     def v2_playbook_on_play_start(self, play):
         name = play.get_name().strip()
+        if play.check_mode or (play.check_mode is None and context.CLIARGS['check']):
+            checkmsg = " [CHECK MODE]" 
+        else
+            checkmsg = "" 
         if not name:
-            msg = u"PLAY"
+            msg = u"PLAY%s" % checkmsg
         else:
-            msg = u"PLAY [%s]" % name
+            msg = u"PLAY [%s]%s" % (name, checkmsg)
 
         self._play = play
 
