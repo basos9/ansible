@@ -56,6 +56,7 @@ class CallbackModule(CallbackBase):
         self._last_task_name = None
         self._task_type_cache = {}
         self._playbook = None
+        self._play_context = None
         super(CallbackModule, self).__init__()
 
     def set_options(self, task_keys=None, var_options=None, direct=None):
@@ -214,7 +215,8 @@ class CallbackModule(CallbackBase):
         if task_name is None:
             task_name = task.get_name().strip()
 
-        self._display.banner(u"%s [%s%s]" % (prefix, task_name, args))
+        checkmsg = " [CHECK MODE]" if task.check_mode or (self._play_context and self._play_context.check_mode) else ""
+        self._display.banner(u"%s [%s%s]%s" % (prefix, task_name, args, checkmsg))
         if self._display.verbosity >= 2:
             path = task.get_path()
             if path:
@@ -230,10 +232,11 @@ class CallbackModule(CallbackBase):
 
     def v2_playbook_on_play_start(self, play):
         name = play.get_name().strip()
+        checkmsg = " [CHECK MODE]" if play.check_mode or (self._play_context and self._play_context.check_mode) else ""
         if not name:
-            msg = u"PLAY"
+            msg = u"PLAY%s" % checkmsg
         else:
-            msg = u"PLAY [%s]" % name
+            msg = u"PLAY [%s]%s" % (name, checkmsg)
 
         self._play = play
 
@@ -397,3 +400,6 @@ class CallbackModule(CallbackBase):
     def v2_playbook_on_notify(self, handler, host):
         if self._display.verbosity > 1:
             self._display.display("NOTIFIED HANDLER %s for %s" % (handler.get_name(), host), color=C.COLOR_VERBOSE, screen_only=True)
+
+    def set_play_context(self, play_context):
+        self._play_context = play_context
