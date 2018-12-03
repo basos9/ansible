@@ -1,0 +1,2 @@
+minor_changes:
+    - Added check mode markers (DRY RUN, CHECK_MODE) when running a pb in check mode. By default this is off until tested, use ANSIBLE_CHECK_MODE_MARKERS=1 to enable it.
