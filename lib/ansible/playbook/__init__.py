@@ -44,11 +44,14 @@ class Playbook:
         self._basedir = to_text(os.getcwd(), errors='surrogate_or_strict')
         self._loader = loader
         self._file_name = None
+        self._executor = None
 
     @staticmethod
-    def load(file_name, variable_manager=None, loader=None):
+    def load(file_name, variable_manager=None, loader=None, executor=None):
         pb = Playbook(loader=loader)
         pb._load_playbook_data(file_name=file_name, variable_manager=variable_manager)
+        # Optional executor for runtime data reference (when instantiated from PlaybookExecutor)
+        pb._executor = executor
         return pb
 
     def _load_playbook_data(self, file_name, variable_manager, vars=None):
