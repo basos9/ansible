@@ -55,6 +55,7 @@ class CallbackModule(CallbackBase):
         self._last_task_banner = None
         self._last_task_name = None
         self._task_type_cache = {}
+        self._playbook = None
         super(CallbackModule, self).__init__()
 
     def set_options(self, task_keys=None, var_options=None, direct=None):
@@ -365,6 +366,9 @@ class CallbackModule(CallbackBase):
                 self._display.display('\tRUN: %s' % self._dump_results(stats.custom['_run'], indent=1).replace('\n', ''))
             self._display.display("", screen_only=True)
 
+        if self._playbook and self._playbook._executor and self._playbook._executor._options.check:
+            self._display.banner("DRY RUN (no changes were made)")
+
     def v2_playbook_on_start(self, playbook):
         if self._display.verbosity > 1:
             from os.path import basename
@@ -379,6 +383,9 @@ class CallbackModule(CallbackBase):
                     val = getattr(self._options, option)
                     if val and self._display.verbosity > 3:
                         self._display.display('%s: %s' % (option, val), color=C.COLOR_VERBOSE, screen_only=True)
+        self._playbook = playbook
+        if self._playbook._executor and self._playbook._executor._options.check:
+            self._display.banner("DRY RUN")
 
     def v2_runner_retry(self, result):
         task_name = result.task_name or result._task
