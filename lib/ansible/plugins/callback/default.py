@@ -378,6 +378,9 @@ class CallbackModule(CallbackBase):
                 self._display.display('\tRUN: %s' % self._dump_results(stats.custom['_run'], indent=1).replace('\n', ''))
             self._display.display("", screen_only=True)
 
+        if context.CLIARGS['check']:
+            self._display.banner("DRY RUN")
+
     def v2_playbook_on_start(self, playbook):
         if self._display.verbosity > 1:
             from os.path import basename
@@ -393,6 +396,9 @@ class CallbackModule(CallbackBase):
                 val = context.CLIARGS[argument]
                 if val:
                     self._display.display('%s: %s' % (argument, val), color=C.COLOR_VERBOSE, screen_only=True)
+
+        if context.CLIARGS['check']:
+            self._display.banner("DRY RUN")
 
     def v2_runner_retry(self, result):
         task_name = result.task_name or result._task
