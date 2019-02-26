@@ -50,4 +50,14 @@ class ModuleDocFragment(object):
         ini:
           - key: show_custom_stats
             section: defaults
+      check_mode_markers:
+        name: Show markers when running on check mode
+        description: "Toggle to control displaying markers when running in check mode with the default callback. The markers are 'DRY RUN' at the beggining and ending of playbooks execution (when calling ansible-playbook with --check argument) and 'CHECK MODE' as a suffix at every task that is run in 'check' mode."
+        type: bool
+        default: yes
+        env: 
+          - name: CHECK_MODE_MARKERS
+        ini:
+          - key: check_mode_markers
+            section: defaults
 '''

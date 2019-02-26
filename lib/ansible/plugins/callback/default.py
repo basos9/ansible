@@ -213,7 +213,7 @@ class CallbackModule(CallbackBase):
         if task_name is None:
             task_name = task.get_name().strip()
 
-        if task.check_mode or (task.check_mode is None and context.CLIARGS['check']):
+        if (task.check_mode or (task.check_mode is None and context.CLIARGS['check'])) and self.check_mode_markers:
             checkmsg = " [CHECK MODE]" 
         else:
             checkmsg = "" 
@@ -233,7 +233,7 @@ class CallbackModule(CallbackBase):
 
     def v2_playbook_on_play_start(self, play):
         name = play.get_name().strip()
-        if play.check_mode or (play.check_mode is None and context.CLIARGS['check']):
+        if (play.check_mode or (play.check_mode is None and context.CLIARGS['check'])) and self.check_mode_markers:
             checkmsg = " [CHECK MODE]" 
         else
             checkmsg = "" 
@@ -381,7 +381,7 @@ class CallbackModule(CallbackBase):
                 self._display.display('\tRUN: %s' % self._dump_results(stats.custom['_run'], indent=1).replace('\n', ''))
             self._display.display("", screen_only=True)
 
-        if context.CLIARGS['check']:
+        if context.CLIARGS['check'] and self.check_mode_markers:
             self._display.banner("DRY RUN (no changes were made)")
 
     def v2_playbook_on_start(self, playbook):
@@ -400,7 +400,7 @@ class CallbackModule(CallbackBase):
                 if val:
                     self._display.display('%s: %s' % (argument, val), color=C.COLOR_VERBOSE, screen_only=True)
 
-        if context.CLIARGS['check']:
+        if context.CLIARGS['check'] and self.check_mode_markers:
             self._display.banner("DRY RUN")
 
     def v2_runner_retry(self, result):
